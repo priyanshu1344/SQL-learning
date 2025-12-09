@@ -828,55 +828,6 @@ having count(e.emp_no) > 50000;
 
 
 
--- home work on sales_db
-
-use sales_db;
-
-select * from customers;
-select * from payments;
-select * from products;
-select * from sales;
-select * from sales_items;
-
-
--- 1)Write a query to find the total sales amount made by each customer.
-
-select c.first_name, c.last_name, c.customer_id, s.total_amount
-from customers as c join sales as s on c.customer_id = s.customer_id;
-
-
-
--- 2)Find how many products are available in each product category.
-
-select product_id, product_name, stock_quantity
-from products;
-
--- 3)Display customer names and their total purchase amounts, but only for those who spent more than ₹50,000.
-
-select c.first_name, c.last_name, c.customer_id, s.total_amount
-from customers as c join sales as s on c.customer_id = s.customer_id
-where s.total_amount > 50000;
-
--- 4)Find the product name that generated the highest total sales amount (quantity × unit_price).
-
-select p.product_name, s.total_amount
-from products as p join sales_items as i on p.product_id = i.product_id
-join sales as s on s.sale_id = i.sale_id
-order by s.total_amount desc
-limit 1 ;
-
-
-
-select p.product_name, (i.unit_price * i.total_price) as total_sales_amount
-from products as p join sales_items as i on p.product_id = i.product_id
-where i.product_id = i.product_id
-order by total_sales_amount desc
-limit 1 ;
-
-
--- 5)Identify sales where customers made payments in more than one transaction.
-
-select 
 
 
 
