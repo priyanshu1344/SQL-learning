@@ -829,6 +829,489 @@ having count(e.emp_no) > 50000;
 
 
 
+-- Lecture 10   -- sir notes from (10,11,12,13,14) 
+
+
+-- select, from, where, group by, having, order by, limit
+-- from, where, group by, having, select, order by, limit
+
+-- 1) find how many employees working in each departments.
+
+select * from departments;
+
+select * from dept_emp;
+
+select d.dept_no, d.dept_name, count(de.emp_no) as no_of_employees
+from dept_emp de join departments d on de.dept_no = d.dept_no
+group by d.dept_no
+having no_of_employees > 50000;
+
+
+-- 2) find the departments who have more than 50000 employees working.
+
+
+
+
+
+
+-- DDL - Create, alter, drop, rename, truncate
+-- DML - insert, update, delete
+-- DQL - select
+-- DCL - grant, revoke
+-- TCL - Commit, rollback, savepoint
+
+-- update, drop, delete, truncate, commit, rollback, savepoint
+
+rename table employees to employee_info;
+rename table employee_info to employees;
+
+-- DDL - create, alter, drop, rename, truncate
+-- DML - insert, update, delete
+-- DQL - select
+-- DCL - grant, revoke
+-- TCL - commit, rollback
+
+-- select, from, where, group by, having, order by, limit
+-- from, where, group by, having, select, order by, limit
+
+-- update
+
+select * from employees;
+
+-- update table_name
+-- set values
+-- where condition 
+
+update employees
+set first_name = 'Om'
+where emp_no = 10001;
+
+select * from employees;
+
+-- commit, rollback
+
+commit;
+
+update employees
+set first_name = 'Georgi'
+where emp_no = 10001;
+
+select * from employees;
+
+rollback;
+
+update employees
+set first_name = 'Georgi'
+where emp_no = 10001;
+
+commit;
+
+select * from employees;
+
+update employees
+set first_name = 'Om';
+
+rollback;
+commit;
+
+select * from employees;
+
+commit;
+
+update employees 
+set first_name = 'Om'
+where emp_no = 10001;
+
+update employees
+set first_name = 'Sai'
+where emp_no = 10002;
+
+
+select * from employees;
+rollback;
+commit;
+
+select * from employees;
+
+update employees 
+set first_name = 'Om'
+where emp_no = 10001;
+
+savepoint sp1;
+
+update employees
+set first_name = 'Sai'
+where emp_no = 10002;
+
+savepoint sp2;
+
+rollback to sp1;
+
+select * from employees;
+
+update employees 
+set first_name = 'Georgi'
+where emp_no = 10001;
+
+commit;
+
+select * from employees;
+
+-- Drop, delete, truncate
+
+commit;
+
+create table emp_100 as
+select * from employees limit 100;
+
+select * from emp_100;
+
+commit;
+
+-- delete 
+
+-- delete from table_name
+-- where condition
+
+select * from emp_100;
+
+delete from emp_100
+where emp_no = 10001;
+
+rollback;
+commit;
+
+delete from emp_100
+where emp_no < 10011;
+
+select * from emp_100;
+
+rollback;
+commit;
+
+select * from emp_100;
+
+delete from emp_100;
+
+rollback;
+commit;
+
+-- truncate
+
+-- truncate table table_name
+
+select * from emp_100;
+
+truncate table emp_100;
+
+rollback;
+commit;
+
+-- auto increment
+
+-- drop
+select * from emp_100;
+
+-- drop table table_name
+drop table emp_100;
+select * from emp_100;
+
+rollback;
+commit;
+
+-- school_db
+
+create database school_db;
+
+use school_db;
+
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(40),
+    email VARCHAR(40),
+    city VARCHAR(40)
+);
+
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY,
+    course_title VARCHAR(40),
+    category VARCHAR(40),
+    price DECIMAL
+);
+
+CREATE TABLE enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enroll_date DATE,
+    FOREIGN KEY (student_id)
+        REFERENCES students (student_id),
+    FOREIGN KEY (course_id)
+        REFERENCES courses (course_id)
+);
+
+CREATE TABLE progress (
+    progress_id INT PRIMARY KEY,
+    enrollment_id INT,
+    completion_percent DECIMAL,
+    last_access_date DATE,
+    FOREIGN KEY (enrollment_id)
+        REFERENCES enrollments (enrollment_id)
+);
+
+INSERT INTO Students (student_id, student_name, email, city) VALUES
+(1, 'Alice Johnson', 'alice@example.com', 'Mumbai'),
+(2, 'Bob Smith', 'bob@example.com', 'Pune'),
+(3, 'Charlie Brown', 'charlie@example.com', 'Delhi'),
+(4, 'Diana Prince', 'diana@example.com', 'Bangalore'),
+(5, 'Ethan Lee', 'ethan@example.com', 'Hyderabad');
+
+INSERT INTO Courses (course_id, course_title, category, price) VALUES
+(101, 'Python for Beginners', 'Programming', 1999.00),
+(102, 'Advanced Excel', 'Data Analysis', 1499.00),
+(103, 'Web Development Bootcamp', 'Web Development', 2499.00),
+(104, 'Machine Learning Basics', 'AI/ML', 2999.00),
+(105, 'Digital Marketing 101', 'Marketing', 1799.00);
+
+INSERT INTO Enrollments (enrollment_id, student_id, course_id, enroll_date) VALUES
+(1001, 1, 101, '2025-07-01'),
+(1002, 1, 103, '2025-07-10'),
+(1003, 2, 102, '2025-07-05'),
+(1004, 3, 104, '2025-07-08'),
+(1005, 4, 105, '2025-07-15'),
+(1006, 5, 101, '2025-07-20'),
+(1007, 5, 104, '2025-07-25');
+
+INSERT INTO Progress (progress_id, enrollment_id, completion_percent, last_access_date) VALUES
+(2001, 1001, 100.00, '2025-08-01'),
+(2002, 1002, 60.00, '2025-08-05'),
+(2003, 1003, 80.00, '2025-08-03'),
+(2004, 1004, 45.00, '2025-08-04'),
+(2005, 1005, 100.00, '2025-08-02'),
+(2006, 1006, 20.00, '2025-08-06'),
+(2007, 1007, 35.00, '2025-08-06');
+
+-- Q1: List all students with the course titles they are enrolled in.
+
+-- student_id, name, course_title
+
+select s.student_id, s.student_name, c.course_title
+from students s left join enrollments e on s.student_id = e.student_id
+join courses c on c.course_id = e.course_id;
+
+-- Q2: Show the names of students from the city 'Mumbai' 
+-- who are enrolled in any course.
+
+select s.student_id, s.student_name, c.course_title
+from students s left join enrollments e on s.student_id = e.student_id
+join courses c on c.course_id = e.course_id
+where s.city = 'Mumbai';
+
+-- Q3: Count how many students are enrolled in each course.
+
+select c.course_title, count(s.student_id) as no_of_students
+from students s left join enrollments e on s.student_id = e.student_id
+join courses c on c.course_id = e.course_id
+group by c.course_title;
+
+-- Q4: Find all courses with more than 1 student enrolled.
+select c.course_title, count(s.student_id) as no_of_students
+from students s left join enrollments e on s.student_id = e.student_id
+join courses c on c.course_id = e.course_id
+group by c.course_title
+having no_of_students > 1;
+
+-- Q5: Find the average completion percentage for each student.
+-- student_id, name, avg_per
+
+select s.student_id, s.student_name, avg(p.completion_percent) as avg_complition_percent
+from students s  join enrollments e on s.student_id = e.student_id
+join progress p on p.enrollment_id = e.enrollment_id
+group by s.student_id;
+
+-- Q6: List students who accessed their course progress after '2025-08-04'. 
+
+select s.student_id, s.student_name
+from students s  join enrollments e on s.student_id = e.student_id
+join progress p on p.enrollment_id = e.enrollment_id
+where last_access_date > '2025-08-04';
+
+-- Q7: Find the total price of all courses each student is enrolled in.
+
+select c.course_id, c.course_title, sum(c.price) as total_price
+from courses c join enrollments e on c.course_id = e.course_id
+group by c.course_id;
+
+
+
+
+-- lecture 13
+
+
+
+
+-- self join and cross join
+
+-- cross join
+
+select * from departments;
+select * from dept_manager;
+
+select * from departments cross join dept_manager;
+
+create table info (emp_id int,emp_name varchar(40),manager_id int);
+
+insert into info values (1,'shiv',5),
+(2,'om',4),
+(3,'sakshi',2),
+(4,'rahul',1),
+(5,'sham',3);
+
+select * from info;
+
+-- self join
+
+select a.emp_id, a.emp_name,a.manager_id, b.emp_name as manager_name
+from info a join info b on a.manager_id = b.emp_id;
+
+-- Sales Database
+
+select * from customers;
+select * from payments;
+select * from products;
+select * from sales;
+select * from sales_items;
+
+
+-- 1)Write a query to find the total sales amount made by each customer.
+
+select c.customer_id, c.first_name, c.last_name, sum(s.total_amount) as total_sales
+from customers c join sales s on c.customer_id = s.customer_id
+group by c.customer_id;
+
+-- 2)Find how many products are available in each product category.
+
+select category, count(product_name) as no_of_products_available
+from products
+group by category;
+
+-- 3)Display customer names and their total purchase amounts,
+-- but only for those who spent more than ₹50,000.
+
+select c.customer_id, c.first_name, c.last_name, sum(s.total_amount) as total_purchase_amount
+from customers c join sales s on c.customer_id = s.customer_id
+group by c.customer_id
+having total_purchase_amount > 50000;
+
+-- 4)Find the product name that generated the highest total 
+-- sales amount (quantity × unit_price).
+
+select p.product_id, p.product_name, sum(s.quantity * s.unit_price) as highest_sales_amount
+from products p join sales_items s on p.product_id = s.product_id
+group by p.product_id
+order by highest_sales_amount desc
+limit 1;
+
+-- 5)Identify sales where customers made payments in more than one transaction.
+
+-- 6) Show each customer with the list of product names they purchased
+
+select c.customer_id, c.first_name, c.last_name, p.product_name
+from customers c join sales s on c.customer_id = s.customer_id
+join sales_items s1 on s.sale_id = s1.sale_id
+join products p on p.product_id = s1.product_id;
+
+-- 7) Calculate the total sales amount per month.
+
+select monthname(sale_date) as month_name, sum(total_amount) as total_sales
+from sales
+group by month_name;
+
+-- 8) List customers who purchased more than one distinct product in their orders.
+
+-- 9) Find sales where the total payments received are less than the total_amount in sales.
+
+-- 10) Show each customer with their average sale value.
+
+
+
+
+
+-- Leacture 14
+
+-- Subquery
+
+-- find the employees records who's salary is higher than avg_salary of all employees.
+
+select avg(salary) as avg_salary from salaries; -- 63761.2043
+
+select * from salaries
+where salary > 63761.2043;
+
+select * from salaries
+where salary > (select avg(salary) as avg_salary from salaries);
+
+insert into salaries values (10001,1000000000,'2024-01-01','2025-01-01');
+
+-- subquery - query inside another query
+
+-- ways to write subquery
+-- 1) subquery inside select
+-- 2) subquery inside from
+-- 3) subquery inside where
+
+-- types of subquery
+-- 1) single row subquery
+-- 2) multiple row subquery
+-- 3) scalar subquery
+-- 4) correlated subquery
+-- 5) nested subquery
+
+-- find the all manager's emp_no, first_name, last_name, gender
+
+select dm.emp_no, e.first_name, e.last_name, e.gender
+from employees e join dept_manager dm on e.emp_no = dm.emp_no;
+
+select emp_no, first_name, last_name, gender
+from employees 
+where emp_no in (select emp_no from dept_manager); 
+
+-- in = compares a value to a list of values
+-- exists = checks only whether at least one row exists in the subquery
+
+select emp_no, first_name, last_name, gender
+from employees e
+where exists (select emp_no,dept_no from dept_manager dm where e.emp_no = dm.emp_no); 
+
+
+
+select emp_no, first_name, last_name, gender
+from employees 
+where emp_no in (select emp_no from dept_manager
+where emp_no in (select emp_no from titles where title = 'Manager')); 
+
+-- find the total_salary of each manager.
+
+select dm.emp_no, first_name, last_name, sum(s.salary) as total_salary
+from salaries s join dept_manager dm on s.emp_no = dm.emp_no
+join employees e on e.emp_no = s.emp_no
+group by emp_no;
+
+
+select emp_no, sum(salary)
+from salaries
+where emp_no in (select emp_no from dept_manager)
+group by emp_no;
+
+
+
+
+-- Stored Routine 
+
+
+
+
+-- Leacture 15
 
 
 
