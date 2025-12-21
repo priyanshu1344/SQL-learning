@@ -1,4 +1,4 @@
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Leacture 1
 
 -- Data - collection of raw information
@@ -8,21 +8,23 @@
 -- MySQL
 -- sql
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Leacture 2
 
 -- case rule
 -- 1)camel case = iPhone, iBall
 -- 2)pascal case = PhonePay, GooglePay
 -- 3)snake case = emp_info
 
-
--- Leacture 2
 -- Data type
--- 1)char
--- 2)varchar
--- 3)int
--- 4)enum
--- 5)decimal
+-- 1)char : fixed length strings up to 255
+-- 2)varchar : A variable length strings up to 65,535 - it include all specical char and integer
+-- 3)int : stored integer
+-- 4)enum : set of named, predefined constants, enum('m','f')
+-- 5)decimal : it store decimal value like (8,2) = 958367.96
+-- 6)Date : store the date -  yyyy-mm-dd
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 3
 
@@ -46,11 +48,16 @@
 create database Emp_info;
 use Emp_info;
 
+create table employee(
+	emp_no int,
+    birth_date date,
+    first_naem varchar(40),
+    last_naem varchar(40),
+    Gender enum('m','f'),
+    hire_date date
+    );
+
 drop database emp_info;
-
-create database sales_info;
-use sales_info;
-
 
 -- constraints (rules)
 -- 1) primary key
@@ -61,6 +68,12 @@ use sales_info;
 -- 6) default
 -- 7) check 
 
+-----------------------------------------------
+
+-- Home Work
+
+create database sales_info;
+use sales_info;
 
 -- without key
 
@@ -70,7 +83,6 @@ CREATE TABLE sales (
     customer_id INT,
     item_code INT
 );
-
 
 CREATE TABLE customer (
     customer_id INT,
@@ -96,7 +108,6 @@ CREATE TABLE companies (
 
 -- with key
 
-
 CREATE TABLE customer_key (
     customer_id INT primary key,
     first_name varchar(20),
@@ -104,7 +115,6 @@ CREATE TABLE customer_key (
     email_address varchar(50),
     number_of_complaints int
 );
-
 
 CREATE TABLE companies_key (
     company_id INT primary key,
@@ -120,7 +130,6 @@ CREATE TABLE items_key (
     foreign key (company_id) references companies_key(company_id)
 );
 
-
 CREATE TABLE sales_key (
     purchase_number INT primary key,
     Date_of_purchase DATE,
@@ -130,20 +139,18 @@ CREATE TABLE sales_key (
     foreign key (item_code) references items_key(item_code)
 );
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 4
 
-
 use sales_info;
 
-
 -- alter statement
+
 -- 1) add primary key
+
 alter table customer
 add primary key (customer_id);
-
-
-
 
 alter table companies
 add primary key (companies_id);
@@ -154,14 +161,13 @@ add primary key (item_code);
 alter table sales 
 add primary key (purchase_number);
 
--- 2) formign key
+-- 2) foreign key
 
 alter table items
 add foreign key (company_id) references companies (companies_id);
 
--- select i.item, c.companies_name
--- from items i join companies c on i.company_id=c.companies_id
--- ;
+															-- just wasting time	-- select i.item, c.companies_name
+																					-- from items i join companies c on i.company_id=c.companies_id;
 
 alter table sales
 add foreign key (customer_id ) references customer(customer_id),
@@ -190,10 +196,13 @@ where customer_id = 103;
 insert into customer values(103, 'apeksha', 'gadpayal', 'apeksha@gmail.com' ,1);
 
 
--- 4) add column = add column
+-- 4) add column = add new column
 
 alter table customer
 add column gender char(1);
+
+ALTER TABLE customer
+ADD COLUMN middle_name varchar(40) first;
 
 alter table customer
 add column middle_name varchar(40) after first_name;
@@ -235,7 +244,7 @@ value(105);
 -- 9) drop pk and fk
 
 -- alter table customer
--- add column customer_id int after last_name;
+-- add column customer_id int first;
 
 -- alter table customer
 -- drop column customer_id;
@@ -246,16 +255,10 @@ drop primary key;
 alter table  sales
 drop foreign key sales_ibfk_1; 
 
-
 alter table customer
 drop index email_address;
 
-
-
-
-
-
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leatcure 5
 
@@ -282,46 +285,12 @@ select * from employees where first_name= 'saniya' or  first_name  = 'parto';
 -- what is difference between or and and
 -- what is the use of where 
 
-select * from employees where gender = 'm'
- or  first_name  = 'parto';
+SELECT * FROM employees
+WHERE gender = 'm' OR first_name = 'parto';
 
-
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leature 6
-
--- (or, and , in ,not in, <,>,<=,>=,<>,!=, between and
-use employees;
-
-select emp_no, first_name, last_name, gender
-from employees
-where gender = 'm' and first_name = 'chirstian';
-
-
-select * 
-from employees
-where gender = 'f' and first_name in ('saniya', 'parto');
-
-select * 
-from employees
-where gender = 'f' and (first_name = 'saniya' or first_name = 'parto');
-
-select * 
-from salaries
-where salary >80000 and salary< 120000;
-
-select * 
-from salaries
-where salary between 80000 and 120000;  -- between means salary>=80000 and salary<=12000;
-
-
-
-
-
-
-
-
-
 
 select emp_no, first_name, last_name, gender
 from employees
@@ -407,8 +376,7 @@ where salary > 80000 and salary < 120000;
 
 select *
 from salaries
-where salary between 80000 and 120000;
-
+where salary between 80000 and 120000;   -- between means(matlab) salary>=80000 and salary<=120000;
 
 select *
 from salaries
@@ -424,6 +392,10 @@ where gender = 'F' and first_name in ('saniya', 'parto');
 
 select * from employees
 where gender = 'F' and (first_name = 'saniya' or first_name = 'parto');
+
+------------------------------------
+
+-- Revision
 
 -- lecture 1
 -- 1) Data - collection of raw info
@@ -471,6 +443,9 @@ where gender = 'F' and (first_name = 'saniya' or first_name = 'parto');
 -- select, from, where
 -- where (and, or, in, not in, like, not like, >,<,>=,<=,<> !=, between and)
 
+---------------------------------------------
+
+-- Home Work
 
 create database sales_db;
 
@@ -520,16 +495,6 @@ create table sales_items (
 
 alter table sales_items
 add foreign key (product_id) references products (product_id);
-
-
-create table payments (
-    payment_id INT primary key,
-    sale_id INT ,
-    payment_date DATE,
-    amount DECIMAL(10,2),
-    payment_method varchar(20),
-    foreign key (sale_id) references sales(sale_id)
-);
 
 CREATE TABLE payments (
     payment_id INT primary key,
@@ -590,19 +555,12 @@ VALUES
 (5, 1004, '2025-09-10', 4500.00, 'Cash');
 
 select * from payments;
-
-
-
-
-
-
-
-
+ 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 7
 -- Aggregate functions
 -- sum, min,max,avg,count
-
 
 use employees;
 
@@ -629,7 +587,6 @@ where emp_no = 10001;
 select emp_no, sum(salary)
 from salaries
 group by emp_no;
-
 
 SELECT EMP_NO, SUM(SALARY)
 FROM SALARIES
@@ -665,7 +622,6 @@ from salaries
 group by  emp_no
 having avg(salary) > 75000;
 
-
 select emp_no ,avg(salary)
 from salaries
 group by  emp_no
@@ -679,12 +635,14 @@ LIMIT 3;
 -- SQL QUEARY EXCEUTION SEQUENCE
 -- FROM, JOIN, WHERE, GROUP BY, HAVING, SELECT, DISTINCT, ORDER BY, LIMIT
 
+select emp_no ,avg(salary)
+from salaries
+group by  emp_no
+having emp_no > 10010 and avg(salary) > 75000;
 
+-------------------------------------------------------------
 
-
-
-
-
+-- my work in free time just wast of time
 
 use sales_info;
 
@@ -724,23 +682,14 @@ insert into shop_in () values
 insert into shop_in values
 (109,'arti' , '', 'm', 4578589);
 
---
+-- we can insert multiple NULL values in a UNIQUE column because NULL means unknown.
+-- But we cannot insert multiple empty strings ('') because an empty string is a real value.
 
-
-   
 select * from shop_in;
    
 drop table shop_in;
 
-use employees;
-
-select emp_no ,avg(salary)
-from salaries
-group by  emp_no
-having emp_no > 10010 and avg(salary) > 75000;
-
-
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 8
 
