@@ -709,21 +709,19 @@ from salaries
 where emp_no > 11000
 group by emp_no;
 
-
 -- JOINS
--- INNER JOIN, LEFT JOIN, RIGHT JOIN, SELF JOIN, CROSS JOIN
 
+-- INNER JOIN, LEFT JOIN, RIGHT JOIN, SELF JOIN, CROSS JOIN
 
 -- OUTER JOINS
 -- LEFT OUTER JOIN = LEFT JOIN
 -- RIGHT OUTER JOIN = RIGHT JOIN
 
-
 -- LEFT JOIN = all the data from left table and common data from right table
 -- RIGHT JOIN= all the data from right table and common data from left table
 -- INNER JOIN = common data from both the table
 
-
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 9
 
@@ -732,32 +730,50 @@ use employees;
 select * from employees;
 select * from salaries;
 
+-- emp_no, first_name, last_name, gender, salary
 
-select emp_no, sum(salary)
-from salaries
-group by emp_no;
+select employees.emp_no, employees.first_name, employees.last_name,
+employees.gender, salaries.salary
+from employees inner join salaries on employees.emp_no = salaries.emp_no;
 
+-- 10001.......201771  = o/p
+-- 10001...201771....500000 = employees
+-- 10001.......201771 = salaries
 
+select e.emp_no, e.first_name, e.last_name, e.gender, s.salary
+from salaries as s right join employees as e on e.emp_no = s.emp_no;
+
+-- find the total_salary of each employees
+
+select e.emp_no, e.first_name, e.last_name, sum(s.salary)
+from salaries as s  right join employees as e on e.emp_no = s.emp_no
+group by e.emp_no;
 
 -- on delete cascade
+-- combination of two column we can make primary key
+-- normalisation
+-- ACID property
+
+-- find all managers total_salary
+-- emp_no, total_salary
 
 select m.emp_no, sum(s.salary)
 from dept_manager as m left join salaries as s on m.emp_no = s.emp_no
 group by m.emp_no;
 
-
+-- find all managers total_salary
+-- emp_no, first_name, last_name, total_salary
 
 select m.emp_no, e.first_name, e.last_name ,sum(s.salary)
 from dept_manager as m left join salaries  as s on m.emp_no = s.emp_no
 join employees as e on e.emp_no = m.emp_no
 group by m.emp_no;
 
-
+-- emp_no, first_name, last_name, dept_no, dept_name
 
 select e.emp_no, e.first_name, e.last_name , m.dept_no, d.dept_name
 from employees as e join dept_emp as m on e.emp_no = m.emp_no
 join departments as d on m.dept_no = d.dept_no;
-
 
 -- 1) find how many employees working in each department
 -- 2) find the department who have more than 50000 employees working
@@ -773,9 +789,15 @@ join departments as d on d.dept_no = m.dept_no
 group by d.dept_name
 having count(e.emp_no) > 50000;
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+-- Lecture 10
 
+-- Doubt session
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Lecture 11 
 
 
 -- Lecture 10   -- sir notes from (10,11,12,13,14) 
