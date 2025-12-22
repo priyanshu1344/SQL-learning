@@ -966,6 +966,10 @@ select * from emp_100;
 rollback;
 commit;
 
+-------------------------------------------------------------------
+
+-- Homework
+
 -- school_db
 
 create database school_db;
@@ -1113,6 +1117,9 @@ select * from dept_manager;
 
 select * from departments cross join dept_manager;
 
+-- self join
+-- create table for self join
+
 create table info (emp_id int,emp_name varchar(40),manager_id int);
 
 insert into info values (1,'shiv',5),
@@ -1123,19 +1130,21 @@ insert into info values (1,'shiv',5),
 
 select * from info;
 
--- self join
-
 select a.emp_id, a.emp_name,a.manager_id, b.emp_name as manager_name
-from info a join info b on a.manager_id = b.emp_id;
+from info as a join info as b on a.manager_id = b.emp_id;
+
+-------------------------------------------
+
+-- HomeWork
 
 -- Sales Database
 
+use sales_db;
 select * from customers;
 select * from payments;
 select * from products;
 select * from sales;
 select * from sales_items;
-
 
 -- 1)Write a query to find the total sales amount made by each customer.
 
@@ -1187,11 +1196,9 @@ group by month_name;
 
 -- 10) Show each customer with their average sale value.
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
--- Leacture 14
+-- Leacture 13
 
 -- Subquery
 
@@ -1237,8 +1244,6 @@ select emp_no, first_name, last_name, gender
 from employees e
 where exists (select emp_no,dept_no from dept_manager dm where e.emp_no = dm.emp_no); 
 
-
-
 select emp_no, first_name, last_name, gender
 from employees 
 where emp_no in (select emp_no from dept_manager
@@ -1246,24 +1251,20 @@ where emp_no in (select emp_no from titles where title = 'Manager'));
 
 -- find the total_salary of each manager.
 
-select dm.emp_no, first_name, last_name, sum(s.salary) as total_salary
-from salaries s join dept_manager dm on s.emp_no = dm.emp_no
-join employees e on e.emp_no = s.emp_no
-group by emp_no;
-
-
 select emp_no, sum(salary)
 from salaries
-where emp_no in (select emp_no from dept_manager)
+where emp_no in (select emp_no
+				 from dept_manager)
 group by emp_no;
 
+select dm.emp_no, first_name, last_name, sum(s.salary) as total_salary
+from salaries as s join dept_manager as dm on s.emp_no = dm.emp_no
+join employees as e on e.emp_no = s.emp_no
+group by emp_no;
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
--- Stored Routine 
-
-
--- Leacture 15
+-- Leacture 14
 
 -- Stored Routine 
 -- 1) stored procedure
