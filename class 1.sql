@@ -1089,6 +1089,17 @@ select c.course_id, c.course_title, sum(c.price) as total_price
 from courses c join enrollments e on c.course_id = e.course_id
 group by c.course_id;
 
+
+-- 									Delete                Truncate                         Drop
+-- Command Type	                      DML	                DDL                            	DDL
+-- Removes Data	                    Selected rows	        All rows	                   All rows
+-- WHERE Clause                       ✅ Yes	             ❌ No                       	❌ No
+-- Rollback Possible               ✅ Yes (before COMMIT)	 ❌ No	                        ❌ No
+-- Table Structure                   Remains	              Remains	                    ❌ Removed
+-- Auto Increment Reset                ❌ No	              ✅ Yes                         	—
+-- Triggers Fired	                   ✅ Yes               	❌ No	                     ❌ No
+-- Speed	                            Slow	              Fast                         	Fastest
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- lecture 12
