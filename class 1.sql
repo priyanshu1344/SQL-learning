@@ -1280,9 +1280,189 @@ group by emp_no;
 -- Stored Routine 
 
 
-
-
 -- Leacture 15
+
+-- Stored Routine 
+-- 1) stored procedure
+-- 2) stored function / user defined function / function
+
+-- stored procedure
+
+use employees;
+
+select emp_no, sum(salary)
+from  salaries
+group by emp_no;
+xzc
+
+-- A) Stored procedure without parameter
+
+delimiter $$
+create procedure emp_total_salary()
+begin 	
+	select emp_no, sum(salary)
+    from  salaries
+    group by emp_no;
+end $$
+delimiter ;
+
+call emp_total_salary();
+
+-- create procedure emp_10001
+-- find there total_salary of 10001
+
+delimiter $$
+create procedure emp_10001()
+begin
+	select emp_no, sum(salary)
+    from salaries
+    where emp_no = 10001
+    group by emp_no;
+end $$
+delimiter ;
+
+call emp_10001;
+call employees.emp_10001();
+
+-- dynamic
+
+-- A) Stored procedure with in  parameter
+
+delimiter $$
+create procedure emp_info(in p_emp_no int)
+begin
+	select emp_no, sum(salary)
+    from salaries
+    where emp_no = p_emp_no
+    group by emp_no;
+end $$
+delimiter ;
+
+call emp_info(11001);
+call employees.emp_info(10001);
+
+-- create one procedure employee_details which gives total_salary
+-- employees and take first_name and last_name as input parameter
+
+delimiter $$
+create procedure emp_detail(in p_first_name varchar(50), in p_last_name varchar(50))
+begin
+	select e.emp_no, sum(s.salary)
+    from salaries as s join employees as e on e.emp_no = s.emp_no
+    where e.first_name = p_first_name and e.last_name = p_last_name
+    group by e.emp_no;
+end $$
+delimiter ;
+
+call emp_detail('parto', 'bamford');
+
+-- dept_employees
+-- dept_no
+-- dept_no, dept_name, no_of_employees
+
+delimiter $$
+create procedure department_detail(in p_dept_no varchar(5))
+begin
+	select d.dept_no, d.dept_name, count(de.emp_no)
+	from dept_emp as de join departments as d on de.dept_no = d.dept_no
+    where d.dept_no = p_dept_no
+	group by de.dept_no;
+end $$
+delimiter ;
+
+call department_detail('d003');
+
+-- Home work
+
+select * from departments;
+
+-- 1)Find the names of employees who work in the same department as employee 10001.
+
+select first_name from employees
+where emp_no in (
+select emp_no from dept_emp
+where dept_no = 
+(select dept_no from dept_emp where emp_no = 10001));
+
+-- 2)Retrieve employees whose salary is greater than the average salary of all employees.
+
+select emp_no, first_name
+from employees
+where emp_no in (
+select distinct emp_no
+from salaries
+where salary > (
+select avg(salary)
+from salaries));
+
+select emp_no, first_name
+from employees
+where emp_no in (
+select emp_no, max(salary)
+from salaries
+group by emp_no
+having max(salary) > (
+select avg(salary)
+from salaries));
+
+
+-- 3)Find employees who have the maximum salary in the company.
+
+select emp_no, first_name
+from employees
+where emp_no = (
+select emp_no
+from salaries
+where salary = (
+select max(salary)
+from salaries));
+
+-- 4)Get the department name where the highest-paid employee works.
+
+select dept_no, dept_name
+from departments 
+where dept_no = (
+select dept_no
+from dept_emp
+where emp_no = (
+select emp_no
+from salaries
+where salary = (
+select max(salary)
+from salaries)));
+
+
+-- 5)List employees who were hired after the employee with emp_no = 10005.
+
+select emp_no, first_name, hire_date
+from employees
+where hire_date > (
+select hire_date from employees where emp_no = 10005);
+
+-- 6)Get employees whose emp_no exists in both dept_emp and dept_manager tables.
+
+select emp_no 
+from dept_emp
+where emp_no in ( 
+select emp_no
+from dept_manager);
+
+
+-- 7)List employees who have never been managers/*-.
+
+select emp_no 
+from dept_emp
+where emp_no not in ( 
+select emp_no
+from dept_manager);
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+-- Lecture 16
+
+select * from employees;
+
+
 
 
 
