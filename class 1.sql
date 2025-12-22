@@ -795,36 +795,6 @@ having count(e.emp_no) > 50000;
 
 -- Doubt session
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- Lecture 11 
-
-
--- Lecture 10   -- sir notes from (10,11,12,13,14) 
-
-
--- select, from, where, group by, having, order by, limit
--- from, where, group by, having, select, order by, limit
-
--- 1) find how many employees working in each departments.
-
-select * from departments;
-
-select * from dept_emp;
-
-select d.dept_no, d.dept_name, count(de.emp_no) as no_of_employees
-from dept_emp de join departments d on de.dept_no = d.dept_no
-group by d.dept_no
-having no_of_employees > 50000;
-
-
--- 2) find the departments who have more than 50000 employees working.
-
-
-
-
-
-
 -- DDL - Create, alter, drop, rename, truncate
 -- DML - insert, update, delete
 -- DQL - select
@@ -833,8 +803,14 @@ having no_of_employees > 50000;
 
 -- update, drop, delete, truncate, commit, rollback, savepoint
 
+-- Rename
+
 rename table employees to employee_info;
 rename table employee_info to employees;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Lecture 11
 
 -- DDL - create, alter, drop, rename, truncate
 -- DML - insert, update, delete
@@ -1113,13 +1089,9 @@ select c.course_id, c.course_title, sum(c.price) as total_price
 from courses c join enrollments e on c.course_id = e.course_id
 group by c.course_id;
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
--- lecture 13
-
-
-
+-- lecture 12
 
 -- self join and cross join
 
