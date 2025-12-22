@@ -775,6 +775,10 @@ select e.emp_no, e.first_name, e.last_name , m.dept_no, d.dept_name
 from employees as e join dept_emp as m on e.emp_no = m.emp_no
 join departments as d on m.dept_no = d.dept_no;
 
+----------------------------------------------------
+
+-- Homework
+
 -- 1) find how many employees working in each department
 -- 2) find the department who have more than 50000 employees working
 
@@ -1092,7 +1096,6 @@ where last_access_date > '2025-08-04';
 select c.course_id, c.course_title, sum(c.price) as total_price
 from courses c join enrollments e on c.course_id = e.course_id
 group by c.course_id;
-
 
 -- 									Delete                Truncate                         Drop
 -- Command Type	                      DML	                DDL                            	DDL
