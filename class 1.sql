@@ -1280,7 +1280,6 @@ use employees;
 select emp_no, sum(salary)
 from  salaries
 group by emp_no;
-xzc
 
 -- A) Stored procedure without parameter
 
@@ -1313,7 +1312,7 @@ call employees.emp_10001();
 
 -- dynamic
 
--- A) Stored procedure with in  parameter
+-- A) Stored procedure with in parameter
 
 delimiter $$
 create procedure emp_info(in p_emp_no int)
@@ -1359,6 +1358,8 @@ delimiter ;
 
 call department_detail('d003');
 
+-----------------------------------------------------------------
+
 -- Home work
 
 select * from departments;
@@ -1392,7 +1393,6 @@ having max(salary) > (
 select avg(salary)
 from salaries));
 
-
 -- 3)Find employees who have the maximum salary in the company.
 
 select emp_no, first_name
@@ -1418,7 +1418,6 @@ where salary = (
 select max(salary)
 from salaries)));
 
-
 -- 5)List employees who were hired after the employee with emp_no = 10005.
 
 select emp_no, first_name, hire_date
@@ -1434,7 +1433,6 @@ where emp_no in (
 select emp_no
 from dept_manager);
 
-
 -- 7)List employees who have never been managers/*-.
 
 select emp_no 
@@ -1445,9 +1443,8 @@ from dept_manager);
 
 -----------------------------------------------------------------------------------------------------------------------------
 
--- Lecture 16
+-- Lecture 15 
 
-select * from employees;
 
 
 
