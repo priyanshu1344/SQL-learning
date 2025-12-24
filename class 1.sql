@@ -1312,7 +1312,7 @@ call employees.emp_10001();
 
 -- dynamic
 
--- A) Stored procedure with in parameter
+-- B) Stored procedure with in parameter
 
 delimiter $$
 create procedure emp_info(in p_emp_no int)
@@ -1443,7 +1443,79 @@ from dept_manager);
 
 -----------------------------------------------------------------------------------------------------------------------------
 
--- Lecture 15 
+-- Lecture 15
+
+select * from employees;
+
+-- C)stored procedure with in and out parameter
+
+delimiter $$
+create procedure emp_avg_sal_2(in p_emp_no int, out p_avg_sal decimal)
+begin
+	select avg(salary) into p_avg_sal
+    from salaries
+    where emp_no = p_emp_no
+    group by emp_no;
+end$$
+delimiter ;
+
+set @v_emp_avg_sal = 0;
+call emp_avg_sal_2(10001, @v_emp_avg_sal);
+select @v_emp_avg_sal;
+call emp_avg_sal_2(10011, @v_avg_sal);
+select @v_avg_sal;
+
+-- Stored Function
+
+delimiter $$
+create function emp_avg_sal_2(p_emp_no int) returns decimal
+no sql
+begin
+	declare v_emp_avg_sal decimal;
+    select avg(salary) into v_emp_avg_sal
+    from salaries
+    where emp_no = p_emp_no
+    group  by emp_no;
+    return v_emp_avg_sal;
+end$$
+delimiter ;
+
+select emp_avg_sal_2(10001);
+
+select emp_no, first_name , emp_avg_sal_2(10001)
+from employees
+where emp_no = 10001;
+
+select emp_no, first_name ,(select emp_avg_sal_2(10001)) as avg_sal
+from  employees
+where emp_no = 10001;
+
+-- create function emp_info
+-- total salary
+-- first_name, last_name
+
+delimiter $$
+create function f_emp_info(p_first_name varchar(40), p_last_name varchar(40)) returns decimal
+deterministic
+begin
+	declare v_total_salary decimal;
+    select sum(s.salary) into v_total_salary
+    from salaries as s join employees as e on e.emp_no = s.emp_no
+    where e.first_name = p_first_name and e.last_name = p_last_name
+    group by e.emp_no;
+    return v_total_salary;
+end$$
+delimiter ;
+
+select f_emp_info('parto','bamford') as total_salary;
+
+-- create function f_emo_details
+-- employees latest_salary
+-- input emp_no
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Leacture 16
 
 
 
