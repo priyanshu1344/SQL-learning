@@ -1517,6 +1517,82 @@ select f_emp_info('parto','bamford') as total_salary;
 
 -- Leacture 16
 
+-- Window Function
+
+-- row_number
+-- rank
+-- dense_rank
+-- lag
+-- lead
+
+-- 1) Row_number
+
+Select * from salaries;
+
+select emp_no, salary
+from salaries;
+
+select emp_no, salary,
+row_number() over() as row_num
+from salaries;
+
+select emp_no, salary,
+row_number() over(partition by emp_no) as row_num
+from salaries;
+
+select emp_no, salary,
+row_number() over(partition by emp_no order by salary desc) as row_num
+from salaries;
+
+select emp_no, salary,
+row_number() over(partition by emp_no order by salary desc) as row_num
+from salaries;
+
+select emp_no, max(salary)
+from salaries
+group by emp_no;
+
+select a.emp_no, a.salary
+from 
+(select emp_no, salary,
+row_number() over(partition by emp_no order by salary desc) as row_num
+from salaries) as A
+where a.row_num = 2;
+
+--------------------------------------------
+select emp_no, salary                     --
+from salaries s1                          --
+where (                                   --
+    select count(distinct s2.salary)      --
+    from salaries s2                      --
+    where s2.emp_no = s1.emp_no           --
+      and s2.salary > s1.salary           --
+) = N - 1;                                --
+--------------------------------------------
+
+select a.emp_no, a.salary
+from 
+(select emp_no, salary,
+row_number() over(order by salary desc) as row_num
+from salaries) as A
+where a.row_num = 2;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Leacture 17
+
+-- Rank() and Danse_Rank()
+
+-- Lag and Lead
+
+-- find how many record of male employees
+-- who's salary is higher than avg_salary of all employees
+use employees;
+select count(distinct s.emp_no)
+from salaries as s join employees as e on e.emp_no = s.emp_no
+where e.gender = 'm' and salary > ( select avg(salary) from salaries);
+
+
 
 
 
