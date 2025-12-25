@@ -1,4 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 -- Leacture 1
 
 -- Data - collection of raw information
@@ -9,6 +10,7 @@
 -- sql
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 -- Leacture 2
 
 -- case rule
@@ -640,6 +642,13 @@ from salaries
 group by  emp_no
 having emp_no > 10010 and avg(salary) > 75000;
 
+-- GROUP BY without aggregate = DISTINCT
+-- If you use aggregate function + any normal column in SELECT, then GROUP BY is compulsory.
+-- When GROUP BY is NOT needed If SELECT contains only aggregate functions
+-- where Runs before GROUP BY and having Runs after GROUP BY
+-- GROUP BY can exist without HAVING.
+-- GROUP BY compulsory when HAVING exists
+
 -------------------------------------------------------------
 
 -- my work in free time just wast of time
@@ -775,7 +784,7 @@ select e.emp_no, e.first_name, e.last_name , m.dept_no, d.dept_name
 from employees as e join dept_emp as m on e.emp_no = m.emp_no
 join departments as d on m.dept_no = d.dept_no;
 
-----------------------------------------------------
+----------------------------------------------------------------
 
 -- Homework
 
@@ -1014,21 +1023,21 @@ CREATE TABLE progress (
         REFERENCES enrollments (enrollment_id)
 );
 
-INSERT INTO Students (student_id, student_name, email, city) VALUES
+INSERT INTO Student (student_id, student_name, Email, city) VALUES
 (1, 'Alice Johnson', 'alice@example.com', 'Mumbai'),
 (2, 'Bob Smith', 'bob@example.com', 'Pune'),
 (3, 'Charlie Brown', 'charlie@example.com', 'Delhi'),
 (4, 'Diana Prince', 'diana@example.com', 'Bangalore'),
 (5, 'Ethan Lee', 'ethan@example.com', 'Hyderabad');
 
-INSERT INTO Courses (course_id, course_title, category, price) VALUES
+INSERT INTO Course (course_id, course_title, category, price) VALUES
 (101, 'Python for Beginners', 'Programming', 1999.00),
 (102, 'Advanced Excel', 'Data Analysis', 1499.00),
 (103, 'Web Development Bootcamp', 'Web Development', 2499.00),
 (104, 'Machine Learning Basics', 'AI/ML', 2999.00),
 (105, 'Digital Marketing 101', 'Marketing', 1799.00);
 
-INSERT INTO Enrollments (enrollment_id, student_id, course_id, enroll_date) VALUES
+INSERT INTO Enrollment (enrollment_id, student_id, course_id, enroll_date) VALUES
 (1001, 1, 101, '2025-07-01'),
 (1002, 1, 103, '2025-07-10'),
 (1003, 2, 102, '2025-07-05'),
@@ -1037,7 +1046,7 @@ INSERT INTO Enrollments (enrollment_id, student_id, course_id, enroll_date) VALU
 (1006, 5, 101, '2025-07-20'),
 (1007, 5, 104, '2025-07-25');
 
-INSERT INTO Progress (progress_id, enrollment_id, completion_percent, last_access_date) VALUES
+INSERT INTO Progress (progress_id, enrollment_id, completion_percent, last_accessed_date) VALUES
 (2001, 1001, 100.00, '2025-08-01'),
 (2002, 1002, 60.00, '2025-08-05'),
 (2003, 1003, 80.00, '2025-08-03'),
@@ -1051,28 +1060,28 @@ INSERT INTO Progress (progress_id, enrollment_id, completion_percent, last_acces
 -- student_id, name, course_title
 
 select s.student_id, s.student_name, c.course_title
-from students s left join enrollments e on s.student_id = e.student_id
-join courses c on c.course_id = e.course_id;
+from student s left join enrollment e on s.student_id = e.student_id
+join course c on c.course_id = e.course_id;
 
 -- Q2: Show the names of students from the city 'Mumbai' 
 -- who are enrolled in any course.
 
 select s.student_id, s.student_name, c.course_title
-from students s left join enrollments e on s.student_id = e.student_id
-join courses c on c.course_id = e.course_id
+from student s left join enrollment e on s.student_id = e.student_id
+join course c on c.course_id = e.course_id
 where s.city = 'Mumbai';
 
 -- Q3: Count how many students are enrolled in each course.
 
 select c.course_title, count(s.student_id) as no_of_students
-from students s left join enrollments e on s.student_id = e.student_id
-join courses c on c.course_id = e.course_id
+from student s left join enrollment e on s.student_id = e.student_id
+join course c on c.course_id = e.course_id
 group by c.course_title;
 
 -- Q4: Find all courses with more than 1 student enrolled.
 select c.course_title, count(s.student_id) as no_of_students
-from students s left join enrollments e on s.student_id = e.student_id
-join courses c on c.course_id = e.course_id
+from student s left join enrollment e on s.student_id = e.student_id
+join course c on c.course_id = e.course_id
 group by c.course_title
 having no_of_students > 1;
 
@@ -1080,32 +1089,32 @@ having no_of_students > 1;
 -- student_id, name, avg_per
 
 select s.student_id, s.student_name, avg(p.completion_percent) as avg_complition_percent
-from students s  join enrollments e on s.student_id = e.student_id
+from student s  join enrollment e on s.student_id = e.student_id
 join progress p on p.enrollment_id = e.enrollment_id
 group by s.student_id;
 
 -- Q6: List students who accessed their course progress after '2025-08-04'. 
 
 select s.student_id, s.student_name
-from students s  join enrollments e on s.student_id = e.student_id
-join progress p on p.enrollment_id = e.enrollment_id
+from student s  join enrollment e on s.student_id = e.student_id
+join progres p on p.enrollment_id = e.enrollment_id
 where last_access_date > '2025-08-04';
 
 -- Q7: Find the total price of all courses each student is enrolled in.
 
 select c.course_id, c.course_title, sum(c.price) as total_price
-from courses c join enrollments e on c.course_id = e.course_id
+from course c join enrollment e on c.course_id = e.course_id
 group by c.course_id;
 
--- 									Delete                Truncate                         Drop
--- Command Type	                      DML	                DDL                            	DDL
--- Removes Data	                    Selected rows	        All rows	                   All rows
--- WHERE Clause                       ✅ Yes	             ❌ No                       	❌ No
--- Rollback Possible               ✅ Yes (before COMMIT)	 ❌ No	                        ❌ No
--- Table Structure                   Remains	              Remains	                    ❌ Removed
--- Auto Increment Reset                ❌ No	              ✅ Yes                         	—
--- Triggers Fired	                   ✅ Yes               	❌ No	                     ❌ No
--- Speed	                            Slow	              Fast                         	Fastest
+-- 									Delete                   Truncate                Drop
+-- Command Type	                    DML	                     DDL                     DDL
+-- Removes Data	                    Selected rows	         All rows	              All rows
+-- WHERE Clause                     ✅ Yes	                 ❌ No                   ❌ No
+-- Rollback Possible                ✅ Yes (before COMMIT)	 ❌ No	                  ❌ No
+-- Table Structure                  Remains	                 Remains	              ❌ Removed
+-- Auto Increment Reset              ❌ No	                 ✅ Yes                 	—
+-- Triggers Fired	                 ✅ Yes                 ❌ No	                  ❌ No
+-- Speed	                          Slow	                 Fast                     Fastest
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1136,7 +1145,7 @@ select * from info;
 select a.emp_id, a.emp_name,a.manager_id, b.emp_name as manager_name
 from info as a join info as b on a.manager_id = b.emp_id;
 
--------------------------------------------
+-------------------------------------------------------------------------------
 
 -- HomeWork
 
@@ -1312,7 +1321,7 @@ call employees.emp_10001();
 
 -- dynamic
 
--- B) Stored procedure with in parameter
+-- A) Stored procedure with in parameter
 
 delimiter $$
 create procedure emp_info(in p_emp_no int)
@@ -1447,7 +1456,7 @@ from dept_manager);
 
 select * from employees;
 
--- C)stored procedure with in and out parameter
+-- C) stored procedure with in and out parameter
 
 delimiter $$
 create procedure emp_avg_sal_2(in p_emp_no int, out p_avg_sal decimal)
@@ -1465,6 +1474,21 @@ select @v_emp_avg_sal;
 call emp_avg_sal_2(10011, @v_avg_sal);
 select @v_avg_sal;
 
+-- dept_details
+-- in = dept_no, out = no_of_emp, total_salary
+
+delimiter $$
+create procedure dept_details(in p_dept_no char(4), out p_no_of_employees int, out p_total_salary decimal)
+begin
+	select count(e.emp_no), sum(s.salary) into p_no_of_employees, p_total_salary
+    from dept_emp as e join salaries as s on e.emp_no = s.emp_no
+    where e.dept_no = p_dept_no
+    group by e.dept_no;
+end$$
+delimiter ;
+
+call dept_details('d002', @v_no_of_emp, @v_total_sal);
+    
 -- Stored Function
 
 delimiter $$
@@ -1513,6 +1537,10 @@ select f_emp_info('parto','bamford') as total_salary;
 -- employees latest_salary
 -- input emp_no
 
+-- order by on date
+-- ASC = Aged → Current date
+-- DESC = Current date → Aged
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 16
@@ -1544,14 +1572,11 @@ select emp_no, salary,
 row_number() over(partition by emp_no order by salary desc) as row_num
 from salaries;
 
-select emp_no, salary,
-row_number() over(partition by emp_no order by salary desc) as row_num
-from salaries;
-
 select emp_no, max(salary)
 from salaries
 group by emp_no;
 
+-- 2nd highest salary per emp
 select a.emp_no, a.salary
 from 
 (select emp_no, salary,
@@ -1570,6 +1595,7 @@ where (                                   --
 ) = N - 1;                                --
 --------------------------------------------
 
+-- 2nd highest salary overall
 select a.emp_no, a.salary
 from 
 (select emp_no, salary,
@@ -1583,20 +1609,120 @@ where a.row_num = 2;
 
 -- Rank() and Danse_Rank()
 
+-- 90, 89, 95, 75, 95 
+-- 95, 90, 89, 75 rank
+-- 95, 95, 90, 89, 75
+
+select emp_no, salary,
+rank() over(partition by emp_no order by salary desc )
+from salaries
+where emp_no = 11839; -- 1, 2, 3, 3, 5, 6, 7, 7, 7, 10
+
+select emp_no, salary,
+dense_rank() over(partition by emp_no order by salary desc)
+from salaries
+where emp_no = 11839; -- 1, 2, 3, 3, 4, 5, 6, 6, 6, 7
+
+-- In general business and reporting systems, DENSE_RANK is preferred because it avoids gaps and feels intuitive, while RANK is used when positional gaps are meaningful, such as in competitions.
+
+-- 2nd highest salary per emp
+select A.emp_no, A.salary
+from
+(select emp_no, salary,
+dense_rank() over(partition by emp_no order by salary desc) as den_rank
+from salaries) as A
+where den_rank = 2;
+
 -- Lag and Lead
+
+select emp_no, salary,
+lead(salary) over(partition by emp_no) as nest_salary
+from salaries;
+
+select emp_no, salary,
+lag(salary) over(partition by emp_no) as previous_salary
+from salaries;
+
+-- salary increment
+select emp_no, salary,
+lag(salary) over(partition by emp_no) as previous_salary,
+salary - lag(salary) over(partition by emp_no) as increment
+from salaries;
+
+select emp_no, salary,
+lead(salary) over(partition by emp_no) as next_salary,
+lead(salary) over(partition by emp_no) - salary as increment_next_year
+from salaries;
 
 -- find how many record of male employees
 -- who's salary is higher than avg_salary of all employees
-use employees;
-select count(distinct s.emp_no)
+
+select count(s.emp_no)
 from salaries as s join employees as e on e.emp_no = s.emp_no
 where e.gender = 'm' and salary > ( select avg(salary) from salaries);
 
+select count(distinct emp_no)  from salaries;
 
+-- CTE (Common Table Expression)
 
+with male_record as 
+(select s.* from salaries as s join employees as e
+on e.emp_no = s.emp_no
+where e.gender = 'm'),
+all_avg_salary as
+(select avg(salary) as avg_salary
+from salaries)
+select count(*) from male_record as m join all_avg_salary as a
+where m.salary > a.avg_salary;
 
+-- find how many record of female employees
+-- who's salary is higher than avg_salary of all male employees
 
+with avg_male_salary as 
+(select avg(salary) as avg_male_salary
+from salaries as s join employees as e on e.emp_no = s.emp_no
+where e.gender = 'm' ),
+female_emp as 
+(select e.emp_no, s.salary
+from employees e
+join salaries s on e.emp_no = s.emp_no
+where e.gender = 'F')
+select count(*)
+from avg_male_salary as m join female_emp as f
+where f.salary > m.avg_male_salary;
 
+-- temporary table
+-- index
+-- view
+-- on delete cascad
+-- import and export
+-- normalization and acid
 
+-----------------------------------------
 
+-- Homework
+
+-- create function f_emo_details
+-- employees latest_salary
+-- input emp_no
+
+DELIMITER $$
+CREATE FUNCTION f_emp_latest_salary(p_emp_no INT) RETURNS DECIMAL
+DETERMINISTIC
+BEGIN
+    DECLARE v_latest_salary DECIMAL(10,2);
+    SELECT salary INTO v_latest_salary
+    FROM salaries
+    WHERE emp_no = p_emp_no
+    ORDER BY from_date DESC
+    LIMIT 1;
+    RETURN v_latest_salary;
+END$$
+DELIMITER ;
+
+select f_emp_latest_salary(10001);
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Leacture 18
 
