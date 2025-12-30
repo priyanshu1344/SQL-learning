@@ -1896,25 +1896,142 @@ select * from Medications;
 
 -----------------------------------------
 
+-- on Delete Cascad
 
--- on 
+create database emp_2;
+
+create table employees (emp_no int , emp_name varchar(40), gender char(1), hire_date date);
+
+alter table employees
+add primary key(emp_no);
+
+create table salaries (
+		emp_no int , 
+        salary decimal, 
+        from_date date, 
+        to_date date)
+        ;
+        
+alter table salaries
+add foreign key (emp_no) references employees (emp_no) on delete cascade;
+
+insert into employees values (101, 'om' , 'm', '2021-08-21'), (102, 'sai' , 'm', '2021-08-22');
+
+insert into salaries values (101, 2500, '1999-9-23', '2031-06-08'),(102, 6940, '1979-9-23', '2081-6-9');
+
+select * from salaries;
+select * from employees;
+
+delete from employees
+where emp_no = 101;
+
+select * from salaries;
+select * from employees;
+
+-- Case Statements
+
+select * from employees;
+
+select emp_no, first_name, last_name,
+case 
+	when gender = 'm' then 'Male'
+    else 'Female'
+    -- or we can write (when gender = 'f' then 'female')
+end as gender
+from employees;
+
+select * from employees;
+
+-- 50000 < very low
+-- 50000 > low
+-- 100000 > medium
+-- 150000 > high
+
+select * from salaries;
 
 select emp_no, salary,
-salary - lag(salary) over(partition by emp_no) as increment
+case
+	when salary > 150000 then 'high'
+    when salary > 100000 then 'medium'
+    when salary > 50000 then 'low'
+    else 'very low'
+end as salary
 from salaries;
 
+-- emp_no, salary, salary_increment, salary_range
+-- salary_increment < 500 then low
+-- 					> 500 then medium
+-- 					> 1000 then high
 
 select emp_no, salary,
-salary - lag(salary) over(partition by emp_no) as increment,
+salary - lag(salary) over(partition by emp_no) as salary_increment,
 case
-    when salary - lag(salary) over(partition by emp_no) > 1000 then 'high'
+    when salary - lag(salary) over(partition by emp_no) > 1000 then 'high' -- we cannot write salary_increment > 1000 because from run before select and we use that alis in select
     when salary - lag(salary) over(partition by emp_no) > 500 then 'medium'
     else 'low'
-end as a
+end as salary_increment_range
 from salaries;
 
+-- find how many record of female employees
+-- who's salary is higher than avg_salary of all male employees
+-- total_female_record, total_female_higher_salary
+
+with avg_male_salary as 
+(select avg(salary) as avg_male_salary
+from salaries as s join employees as e on e.emp_no = s.emp_no
+where e.gender = 'm' ),
+female_emp as 
+(select e.emp_no, s.salary
+from employees e
+join salaries s on e.emp_no = s.emp_no
+where e.gender = 'F')
+select count(*) as total_female_record, 
+sum(case 
+	when f.salary > m.avg_male_salary then 1
+    else 0
+end) as total_female_higher_salary
+from avg_male_salary as m join female_emp as f
+;
+
+-- Temporary Table
+
+create temporary table emp_100 as 
+select * from employees limit 100;
+
+select * from emp_100;
+
+create temporary table f_record as
+select e.emp_no, s.salary
+from employees e join salaries s on e.emp_no = s.emp_no
+where e.gender = 'F';
+
+create temporary table m_avg_salary as 
+select avg(salary) as avg_male_salary
+from salaries as s join employees as e on e.emp_no = s.emp_no
+where e.gender = 'm';
+
+select * from M_avg_salary;
+select * from f_record;
+
+select * from f_record as f join m_avg_salary as m
+where f.salary > m.avg_male_salary;
+
+-- temporary table is just for one time when we reconnent to servey it does not exist
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 20
+
+-- Index
+
+-- view
+
+-- Imoprt and Export
+
+-- normaliztion and ACID
+
+-- Running total
+
+-- check
+
 
