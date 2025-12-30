@@ -1450,7 +1450,7 @@ where emp_no not in (
 select emp_no
 from dept_manager);
 
------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Lecture 15
 
@@ -1725,4 +1725,196 @@ select f_emp_latest_salary(10001);
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 18
+
+-- Class test
+
+use employees;
+
+-- 1) Find the average salary of each department
+
+SELECT d.dept_name,
+       AVG(s.salary) AS avg_salary
+FROM departments d
+JOIN dept_emp de ON d.dept_no = de.dept_no
+JOIN salaries s ON de.emp_no = s.emp_no
+GROUP BY d.dept_name;
+
+-- 2) List departments where the employee count is greater than 50,000.
+
+SELECT dept_no,
+       COUNT(emp_no) AS emp_count
+FROM dept_emp 
+GROUP BY dept_no
+HAVING COUNT(emp_no) > 50000;
+
+-- 4) Display department-wise maximum and minimum salary.
+
+SELECT d.dept_no,
+       MAX(s.salary) AS max_salary,
+       MIN(s.salary) AS min_salary
+FROM dept_emp d JOIN salaries s ON d.emp_no = s.emp_no
+GROUP BY d.dept_no;
+
+-- 5) Find employees who have more than one salary record.
+
+SELECT emp_no, COUNT(emp_no) AS salary_records
+FROM salaries
+GROUP BY emp_no
+HAVING COUNT(emp_no) > 1;
+
+-- 11) Find the second highest salary in each department.
+
+SELECT dept_no, max(salary)
+FROM (
+    SELECT d.dept_no,
+           s.salary,
+           DENSE_RANK() OVER (
+               PARTITION BY d.dept_no
+               ORDER BY s.salary DESC
+           ) AS A
+           from dept_emp as d join salaries as s on s.emp_no = d.emp_no
+           )as b
+where a = 2
+group by dept_no;
+
+-- 10) Find employees whose salary equals the maximum salary in the company.
+
+SELECT e.emp_no, s.salary
+FROM employees e
+JOIN salaries s ON e.emp_no = s.emp_no
+WHERE s.salary = (SELECT MAX(salary) FROM salaries);
+
+-- 9) Show employees who do not belong to any department currently.
+
+SELECT e.emp_no
+FROM employees e
+LEFT JOIN dept_emp de
+       ON e.emp_no = de.emp_no
+WHERE de.emp_no IS NULL;
+
+-- 8) Find employees along with their current title.
+
+SELECT e.emp_no,
+       t.title
+FROM employees e
+JOIN titles t ON e.emp_no = t.emp_no
+WHERE t.to_date = (
+    SELECT MAX(t2.to_date)
+    FROM titles t2
+);
+
+-- 7) List employees who are currently working as managers. (o/p contain emp_no, first_name, last_name, gender)
+
+SELECT e.emp_no, e.first_name, e.last_name, e.gender
+FROM employees e
+JOIN dept_manager dm ON e.emp_no = dm.emp_no
+WHERE dm.to_date = (
+    SELECT MAX(dm.to_date)
+    FROM dept_manager dm
+);
+
+-- 6) Get employee name, department name, and current salary.
+
+select e.emp_no, de.dept_name, s.salary
+from employees e JOIN dept_emp d ON e.emp_no = d.emp_no
+join departments de on de.dept_no = d.dept_no
+join salaries as s on s.emp_no = e.emp_no
+where s.to_date = (select max(to_date)
+                   from salaries);
+                   
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Leacture 19
+
+------------------------------------------------
+
+Create database Hospital;
+
+use hospital;
+
+create table Patients (
+    PatientID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    DOB DATE,
+    Gender VARCHAR(10),
+    ContactNumber VARCHAR(15),
+    City VARCHAR(50)
+    );
+    
+create table Doctors (
+    DoctorID INT PRIMARY KEY,
+    DoctorName VARCHAR(100),
+    Specialization VARCHAR(50),
+    ExperienceYears INT,
+    ConsultationFee DECIMAL(10,2)
+    );
+    
+create table Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    Status VARCHAR(20), -- 'Completed', 'Cancelled', 'Scheduled'
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+    );
+
+create table Treatments (
+    TreatmentID INT PRIMARY KEY,
+    AppointmentID INT,
+    Diagnosis VARCHAR(100),
+    TreatmentCost DECIMAL(10,2),
+    MedicinePrescribed VARCHAR(200),
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+    );
+    
+create table Bills (
+	BillID INT PRIMARY KEY,
+    PatientID INT,
+    BillDate DATE,
+    TotalAmount DECIMAL(10,2),
+    PaymentMode VARCHAR(20), -- 'Cash', 'Card', 'UPI', 'Insurance'
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID)
+    );
+    
+create table Medications (
+    MedicineID INT PRIMARY KEY,
+    MedicineName VARCHAR(100),
+    Category VARCHAR(50),
+    Price DECIMAL(10,2),
+    StockQuantity INT
+    );
+
+select * from Patients;
+select * from Doctors;
+select * from Appointments;
+select * from Treatments;
+select * from bills;
+select * from Medications;
+
+
+-----------------------------------------
+
+
+-- on 
+
+select emp_no, salary,
+salary - lag(salary) over(partition by emp_no) as increment
+from salaries;
+
+
+select emp_no, salary,
+salary - lag(salary) over(partition by emp_no) as increment,
+case
+    when salary - lag(salary) over(partition by emp_no) > 1000 then 'high'
+    when salary - lag(salary) over(partition by emp_no) > 500 then 'medium'
+    else 'low'
+end as a
+from salaries;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Leacture 20
 
