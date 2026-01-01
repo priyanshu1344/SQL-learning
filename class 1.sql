@@ -2064,9 +2064,78 @@ select emp_no , salary,
 sum(salary) over (partition by emp_no order by from_date) as running_total
 from salaries;
 
--- normaliztion and ACID
+-- normaliztion
+
+-- Normalization is an important process in database design that helps improve the database's efficiency, consistency, and accuracy. 
+-- It makes it easier to manage and maintain the data and ensures that the database is adaptable to changing business needs
+
+-- Normalization organizes data through normal forms to reduce redundancy and prevent anomalies.
+-- 1NF : Eliminating Duplicate Records
+--         Each column must have atomic (indivisible) values
+--         No repeating groups or multi-valued attributes
+--         Each row must be uniquely identifiable
+
+-- 2NF : Eliminating Partial Dependency
+--         Table must be in 1NF
+--         No partial dependency
+--         Applies only to composite primary keys
+
+-- 3NF : Eliminating Transitive Dependency
+--         Table must be in 2NF
+--         No transitive dependency
+--         Non-key columns must depend only on primary key
+
+-- Boyce-Codd Normal Form (BCNF): The Strongest Form of 3NF
+--         Stronger version of 3NF
+--         Every determinant must be a candidate key
+
+-- 4NF : Removing Multi-Valued Dependencies
+--        Table must be in BCNF
+--        No multi-valued dependency
+
+-- 5NF : Eliminating Join Dependency
+--        Removes join dependency
+--        Used in very complex databases
+
+-- ACID Property
+-- ACID properties ensure database transactions are reliable, consistent, isolated, and permanent.
+-- Atomicity
+--          All or nothing
+--          Either all steps of a transaction succeed, or none.
+--          Example: Transferring money → either debit and credit both happen, or neither.
+
+-- Consistency
+--          Transaction brings database from one valid state to another
+--          Ensures data integrity rules are not broken.
+--          Example: Total balance in bank always matches total funds.
+
+-- Isolation
+--          Concurrent transactions do not interfere with each other.
+--          Each transaction sees the database as if it’s alone.
+--          Example: Two people booking the same ticket → database prevents double booking.
+
+-- Durability
+--          Once a transaction is committed, it is permanent.
+--          Data survives crash, power failure, or error.
+--          Example: After you save a bank transfer, it remains even if server restarts.
+
 
 -- check
+-- CHECK constraint ensures that column values meet a specified condition to maintain data integrity.
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    salary DECIMAL(10,2),
+    dept_id INT,
+    CONSTRAINT chk_salary CHECK (salary > 0)
+);
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    salary DECIMAL(10,2) CHECK (salary > 0)  -- salary must be positive
+);
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
