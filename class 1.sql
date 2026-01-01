@@ -2024,14 +2024,50 @@ where f.salary > m.avg_male_salary;
 
 -- Index
 
+Select * from employees
+where hire_date > '2000-01-01';
+
+create index i_hire_date on employees(hire_date);
+
+Select * from employees
+where hire_date > '2000-01-01'; 
+-- queary optimization technique
+-- signal index and multi index
+-- B-tree index and bit map index
+-- B-tree index (work on numerical column) = search like binary search = divide and search = first arrange in asc or desc than cheack middle value than check that value is samaller or greater than search and the process continue when the value find.
+-- bit map index (catrogarical column) = it search in 1 0 1 1 0 0 in birany in that 1 mean true and 0 mean false
+
 -- view
+
+create view v_hr as
+select e.emp_no, e.first_name, s.salary
+from salaries as s join employees as e on e.emp_no= s.emp_no;
+
+select * from v_hr;
+-- it is a virtual table based on one or multipal table
+-- best table for v_hr table is = employees ans salaries = or we can say parent table
+-- it is dynamic in nature
+-- it cannot be edit
 
 -- Imoprt and Export
 
--- normaliztion and ACID
+select * from v_hr limit 100;
+-- when result come we can see on top of result we see export button click save in any location
+
+-- for import = create database or use any database = right click on database = table data import wizard = file path or browse = create new table or use existing table and give name to new table = next = next
+select * from export_in_sql_import;
 
 -- Running total
+-- all aggrate funtion use in window function
+
+select emp_no , salary,
+sum(salary) over (partition by emp_no order by from_date) as running_total
+from salaries;
+
+-- normaliztion and ACID
 
 -- check
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
