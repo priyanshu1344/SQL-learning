@@ -278,6 +278,8 @@ select * from employees;
 
 select emp_no from employees;
 
+-- Select (column name) from (table name)
+
 select * from employees where first_name = 'saniya';
 
 select * from employees where gender = 'f';
