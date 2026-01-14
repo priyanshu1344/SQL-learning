@@ -46,7 +46,7 @@
 -- 5) TCL - (tranctional control lang.)
 -- (commit, rollback, savepoint)
 
-
+ 
 create database Emp_info;
 use Emp_info;
 
