@@ -216,5 +216,3 @@ change column `Yearly Income` Yearly_Income int;
 -- UNIX timestamps count seconds from 1 January 1970, so we use DATE(1970,1,1) as the base when converting to human-readable dates.
 
 
-
-
