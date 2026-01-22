@@ -215,4 +215,3 @@ change column `Yearly Income` Yearly_Income int;
 -- Values like 1482969600 are UNIX timestamps. I convert them using the 1970 epoch before importing into MySQL
 -- UNIX timestamps count seconds from 1 January 1970, so we use DATE(1970,1,1) as the base when converting to human-readable dates.
 
-
