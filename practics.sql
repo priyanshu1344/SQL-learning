@@ -193,7 +193,7 @@ change column `Order Priority` Order_Priority varchar(20);
 
 select * from orders;
 
-savepoint sp5;
+savepoint sp5; 
 
 select * from customer;
 
