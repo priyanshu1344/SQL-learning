@@ -2,7 +2,7 @@ create database priyanshu;
 use priyanshu;
 
 select * from globalsuperstore; 
-
+ 
 alter table globalsuperstore
 change column `Order id` order_id varchar(20);
  
