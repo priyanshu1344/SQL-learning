@@ -27,7 +27,6 @@ modify column `postal code` int;
 alter table globalsuperstore
 change column  `Order Date` Order_Date date;
 
-
 create database priyanshu;
 
 select count(*) from globalsuperstore;
