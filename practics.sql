@@ -190,7 +190,7 @@ modify column Profit decimal (12,4),
 change column `Shipping Cost` Shipping_Cost decimal(10,2),
 change column `Order Priority` Order_Priority varchar(20);
 
-select * from orders;
+select * from orders; 
 
 savepoint sp5; 
 
