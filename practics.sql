@@ -101,7 +101,7 @@ select * from customer; -- 1590 records
 select * from people; -- 999 records
 select * from return_s;  -- 1173 records
 
--- ------------------------------------------------------
+-- ------------------------------------------------------ 
 
 -- **now start data cleaning**
 
