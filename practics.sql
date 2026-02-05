@@ -8,7 +8,7 @@ change column `Order id` order_id varchar(20);
  
 alter table globalsuperstore
 change column `Order date` order_date date;
-
+ 
 select `Postal Code` from globalsuperstore;
 
 select state, count(distinct(`postal code`))
