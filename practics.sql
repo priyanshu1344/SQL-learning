@@ -1,5 +1,5 @@
 create database priyanshu;
-use priyanshu;
+use priyanshu; 
 
 select * from globalsuperstore; 
  
