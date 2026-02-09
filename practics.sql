@@ -37,7 +37,6 @@ select * from globalsuperstore;
 alter table globalsuperstore
 change column `order date` order_date date;
 
-
 select country, state, count(`postal code`) as code
 from globalsuperstore
 group by country, state
