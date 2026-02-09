@@ -1,14 +1,14 @@
 create database priyanshu;
-use priyanshu; 
+use priyanshu;
 
-select * from globalsuperstore; 
- 
-alter table globalsuperstore 
+select * from globalsuperstore;
+
+alter table globalsuperstore
 change column `Order id` order_id varchar(20);
- 
+
 alter table globalsuperstore
 change column `Order date` order_date date;
- 
+
 select `Postal Code` from globalsuperstore;
 
 select state, count(distinct(`postal code`))
@@ -26,6 +26,7 @@ modify column `postal code` int;
 
 alter table globalsuperstore
 change column  `Order Date` Order_Date date;
+
 
 create database priyanshu;
 
@@ -82,7 +83,7 @@ drop database priyanshu;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- **SQL project with data cleaning**
+-- **SQL Practics project for learning data cleaning**
 
 create database Global_Super_Store ; -- crete database
 
@@ -101,7 +102,7 @@ select * from customer; -- 1590 records
 select * from people; -- 999 records
 select * from return_s;  -- 1173 records
 
--- ------------------------------------------------------ 
+-- ------------------------------------------------------
 
 -- **now start data cleaning**
 
@@ -190,9 +191,9 @@ modify column Profit decimal (12,4),
 change column `Shipping Cost` Shipping_Cost decimal(10,2),
 change column `Order Priority` Order_Priority varchar(20);
 
-select * from orders; 
+select * from orders;
 
-savepoint sp5; 
+savepoint sp5;
 
 select * from customer;
 
@@ -213,4 +214,246 @@ change column `Yearly Income` Yearly_Income int;
 
 -- Values like 1482969600 are UNIX timestamps. I convert them using the 1970 epoch before importing into MySQL
 -- UNIX timestamps count seconds from 1 January 1970, so we use DATE(1970,1,1) as the base when converting to human-readable dates.
+
+select * from orders;          -- 50990
+select * from customer;        -- 1590
+select * from people;          -- 13
+select * from return_s;        -- 1173
+
+select count(postal_code)         -- 9694
+from orders
+where Postal_Code = null;         -- 0 why 
+
+-- String / Text Cleaning
+-- TRIM(), LTRIM(), RTRIM(), REPLACE(), REGEXP_REPLACE(), LOWER(), UPPER(), INITCAP() (Oracle/Postgres), SUBSTRING() / SUBSTR(), 
+-- LEFT(), RIGHT(), CONCAT(), CONCAT_WS(), LENGTH() / CHAR_LENGTH()
+
+-- NULL Handling
+-- IFNULL(), COALESCE(), NULLIF()
+
+-- Type & Value Cleaning
+-- CAST(), CONVERT(), ROUND(), CEILING(), FLOOR(), ABS()
+
+-- Date Cleaning
+-- STR_TO_DATE(), DATE_FORMAT(), DATEDIFF(), DATE_ADD(), DATE_SUB(), YEAR(), MONTH(), DAY()
+
+-- Duplicate Handling
+-- DISTINCT, ROW_NUMBER(), RANK(), DENSE_RANK()
+
+-- Conditional Cleaning
+-- CASE WHEN, IF()
+
+-- Pattern Matching
+-- LIKE, REGEXP, REGEXP_LIKE()
+
+-- Other Useful
+-- REVERSE(), LPAD(), RPAD(), POSITION() / LOCATE()
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- emp who not have manager
+
+with z as
+(
+with current_manager as
+(
+-- current manager
+select dm.emp_no, d.dept_name, d.dept_no 
+from dept_manager as dm join departments as d 
+on dm.dept_no = d.dept_no
+where dm.to_date in (select max(to_date)
+				  from salaries)
+),
+current_emp_and_dept as
+(
+-- current emp and there dept
+select e.emp_no, d.dept_name, de.dept_no
+from employees as e join dept_emp as de on e.emp_no = de.emp_no
+join departments as d on d.dept_no = de.dept_no
+where de.to_date  in (select max(to_date)
+                       from salaries)
+order by e.emp_no
+)
+select x.emp_no, x.dept_no, y.emp_no as r
+from current_emp_and_dept as x join current_manager as y
+on x.dept_no = y.dept_no
+order by x.emp_no
+)
+select e.emp_no
+from employees as e
+where e.emp_no not in (select z.emp_no from z);
+
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+create table test(
+	s_no int primary key auto_increment,
+    full_name varchar(30),
+    gender enum('m','f'),
+    aadhar_no int unique
+    );
+    
+select * from test;
+
+alter table test
+drop index aadhar_no;
+
+insert into test (full_name, gender, aadhar_no) values
+   ('a','m',456698552),
+   ('b','f',894561674),
+   ('c','f',564875643),
+   ('d','m',545678889),
+   ('d','m',545678889),
+   ('d','m',545678889)
+   ;	
+   
+select distinct aadhar_no
+from test;
+
+delete from test
+where aadhar_no not in (select distinct aadhar_no
+						from test);
+
+with a as
+(select distinct aadhar_no
+from test)
+delete from test
+where aadhar_no not in (select *
+						from a);
+                        
+select * from test;
+
+select * from test;
+
+delete from test
+where s_no not in (select min(s_no) from test group by full_name,gender,aadhar_no);
+
+DELETE FROM test
+WHERE s_no NOT IN (
+    SELECT s_no FROM (
+        SELECT MIN(s_no)
+        FROM test
+        GROUP BY full_name, gender, aadhar_no
+    ) AS temp
+);
+
+select * from test;
+
+SELECT full_name, gender, aadhar_no, COUNT(*) AS cnt
+FROM test
+GROUP BY full_name, gender, aadhar_no
+HAVING COUNT(*) > 1;
+
+DELETE FROM test
+WHERE s_no NOT IN (
+    SELECT s_no FROM (
+        SELECT MIN(s_no) AS s_no
+        FROM test
+        GROUP BY aadhar_no
+    ) x
+);
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------
+create table Test_2 (
+	_no varchar(10) primary key,
+    full_name varchar(30),
+    gender enum('m','f'),
+    aadhar_no int unique,
+    sdf int
+    );
+
+select * from test_2;
+
+insert into test_2
+select * from test;
+
+drop table test_2;
+
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- emp who have more salary then there manager
+
+with current_manager_dept_salary as
+(
+	select emp_no, dept_name, max(salary) as salary
+	from
+		(select dm.emp_no, dm.dept_no, d.dept_name, s.salary
+		from salaries as s join dept_manager as dm on s.emp_no = dm.emp_no
+		join departments as d on d.dept_no = dm.dept_no
+		where dm.to_date in (select max(s2.to_date)
+							 from salaries as s2)
+		) x
+	group by emp_no, dept_name
+),
+current_emp_dept_salary as
+(
+	select emp_no, dept_name, max(salary) as salary
+	from
+	(
+		select s3.emp_no, de.dept_no, d2.dept_name, s3.salary
+		from salaries as s3 join dept_emp as de on s3.emp_no = de.emp_no
+		join departments as d2 on de.dept_no = d2.dept_no
+		where s3.to_date in (select max(s4.to_date)
+							 from salaries as s4)
+	) y
+	group by emp_no, dept_name
+)
+select a.emp_no, a.salary 
+from current_emp_dept_salary as a join current_manager_dept_salary as b
+on a.dept_name = b.dept_name
+where a.salary > b.salary;
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- find employee who currently working in more than one departemnt
+
+select e.emp_no , count(dept_no)
+from employees as e join dept_emp as de 
+on e.emp_no = de.emp_no
+where de.to_date in
+				(select max(de2.to_date)            -- (select max(s.to_date)
+                from dept_emp as de2)               --  from salaries as s)
+group by e.emp_no
+having count(dept_no) > 1;
+
+
+-- find employess who salary never change seens joining
+
+select emp_no
+from salaries
+group by emp_no
+having min(salary) = max(salary);
+
+select emp_no
+from (
+    select emp_no, salary,
+	salary - lag(salary) over(partition by emp_no order by from_date) as increment
+    from salaries
+) x
+group by emp_no
+having max(increment) = 0 
+or max(increment) = null;
+
+-- find top 3 hightest grouth percentage employee
+
+select emp_no, ((max(salary)-min(salary))/min(salary)) * 100 as inc_gro_per
+from salaries
+group by emp_no
+order by inc_gro_per desc
+limit 3;
+
+-- rank employess , department wise based on there current salary
+
+select s.emp_no, s.salary, d.dept_name,
+rank() over(partition by de.dept_no order by s.salary desc) as rank_
+from salaries as s join dept_emp as de 
+on s.emp_no = de.emp_no
+join departments as d on d.dept_no = de.dept_no
+where de.to_date in (select max(s2.to_date)
+					 from salaries as s2);
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
