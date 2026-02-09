@@ -455,5 +455,56 @@ where de.to_date in (select max(s2.to_date)
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+-- 🔥 TOP 10 DIFFICULT SQL INTERVIEW QUESTIONS (MIXED)
+-- 1️⃣ Salary–Department Mismatch (Very Tricky)
+
+-- Find employees whose current salary belongs to a department they are no longer part of.
+
+-- 2️⃣ Salary Growth vs Department Growth
+
+-- Find employees whose salary increased, but department never changed throughout their career.
+
+-- 3️⃣ Current Rank Regression
+
+-- Find employees whose current department salary rank is lower than their best historical rank.
+
+-- 4️⃣ Salary Plateau Detection
+
+-- Find employees whose salary remained the same for 3 or more consecutive records.
+
+-- 5️⃣ Incorrect History Records (Data Quality)
+
+-- Find employees whose salary or department date ranges overlap incorrectly.
+
+-- 6️⃣ Top Performer Stability
+
+-- Find employees who were top-paid (rank = 1) in their department for more than 2 consecutive salary records.
+
+-- 7️⃣ Cross-Department Salary Jump
+
+-- Find employees whose largest salary increase happened when they changed departments.
+
+-- 8️⃣ Department Inflation
+
+-- Find departments where the average current salary increased by more than 30% compared to their historical average.
+
+-- 9️⃣ Career Volatility Index (Advanced)
+
+-- For each employee, calculate a volatility score based on:
+
+-- number of department changes
+
+-- number of salary changes
+
+-- total career duration
+
+-- Rank employees by highest volatility.
+
+-- 🔟 Salary History Consistency Check (Very Hard)
+
+-- Find employees whose salary history is continuous (no gaps, no overlaps, no decreases).
+
+
+
 
 
