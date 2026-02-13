@@ -505,5 +505,14 @@ where de.to_date in (select max(s2.to_date)
 
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+select *,
+case
+    when year(hire_date) between max(year(hire_date)) and (max(year(hire_date)) - 2) then 'new'
+    when year(hire_date) between (max(year(hire_date)) - 2) and (max(year(hire_date)) - 7) then 'mid'
+    when year(hire_date) between (max(year(hire_date)) - 7) and min(year(hire_date)) then 'old'
+    end as x
+    from employees
+    group by emp_no;
+    
 
 
