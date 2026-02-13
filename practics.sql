@@ -503,7 +503,7 @@ where de.to_date in (select max(s2.to_date)
 
 -- Find employees whose salary history is continuous (no gaps, no overlaps, no decreases).
 
-
+-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
