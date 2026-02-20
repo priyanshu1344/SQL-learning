@@ -37,6 +37,7 @@ select * from globalsuperstore;
 alter table globalsuperstore
 change column `order date` order_date date;
 
+
 select country, state, count(`postal code`) as code
 from globalsuperstore
 group by country, state
@@ -248,6 +249,17 @@ where Postal_Code = null;         -- 0 why
 -- Other Useful
 -- REVERSE(), LPAD(), RPAD(), POSITION() / LOCATE()
 
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+select *,
+case
+    when year(hire_date) between max(year(hire_date)) and (max(year(hire_date)) - 2) then 'new'
+    when year(hire_date) between (max(year(hire_date)) - 2) and (max(year(hire_date)) - 7) then 'mid'
+    when year(hire_date) between (max(year(hire_date)) - 7) and min(year(hire_date)) then 'old'
+    end as x
+    from employees
+    group by emp_no;
+
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- emp who not have manager
@@ -453,67 +465,158 @@ where de.to_date in (select max(s2.to_date)
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------
 
+-- 1. Find employees whose current salary belongs to a department they are no longer part of.
 
--- 🔥 TOP 10 DIFFICULT SQL INTERVIEW QUESTIONS (MIXED)
--- 1️⃣ Salary–Department Mismatch (Very Tricky)
+select s.emp_no
+from salaries as s left join dept_emp as d
+on s.emp_no = d.emp_no
+where s.to_date in (select max(s2.to_date)
+					from salaries as s2)
+and d.emp_no is null
+and d.to_date in (select max(d2.to_date)
+					from dept_emp as d2);
+                    
+SELECT s.emp_no
+FROM salaries s
+LEFT JOIN dept_emp d
+  ON s.emp_no = d.emp_no
+ AND d.to_date = '9999-01-01'
+WHERE s.to_date = '9999-01-01'
+  AND d.emp_no IS NULL;
 
--- Find employees whose current salary belongs to a department they are no longer part of.
+-- -------------------------------------------------------------------
+with cur_emp_dept as
+(select e.emp_no, de.dept_no
+from employees as e join dept_emp as de on e.emp_no = de.emp_no
+where de.to_date in (select max(de2.to_date)
+					from dept_emp as de2)
+)
+select emp_no
+from employees
+where not exists (select * from cur_emp_dept);
+-- --------------------------------------------------------------------
 
--- 2️⃣ Salary Growth vs Department Growth
+-- 2. Find employees whose salary increased, but department never changed throughout their career.
 
--- Find employees whose salary increased, but department never changed throughout their career.
+select s.emp_no
+from salaries as s join dept_emp as d on s.emp_no = d.emp_no
+group by s.emp_no
+having (max(s.salary) - min(s.salary)) > 0;
 
--- 3️⃣ Current Rank Regression
+
+select e.emp_no, d.dept_no
+from dept_emp as d join employees as e on e.emp_no = d.emp_no
+where d.from_date = e.hire_date;
+
+-- ----------
+
+with emp_from as
+(
+select d1.emp_no, d1.dept_no
+from dept_emp as d1
+where d1.from_date = (select min(d2.from_date)
+					from dept_emp as d2
+                    where d1.emp_no = d2.emp_no)
+),
+emp_to as
+(
+select d3.emp_no, d3.dept_no
+from dept_emp as d3
+where d3.to_date = (select max(d4.to_date)
+					from dept_emp as d4
+                    where d3.emp_no = d4.emp_no)
+),
+emp_sal as
+(
+select s.emp_no
+from salaries as s join dept_emp as d on s.emp_no = d.emp_no
+group by s.emp_no
+having (max(s.salary) - min(s.salary)) > 0
+)
+select x.emp_no
+from emp_from as x join emp_to as y on x.emp_no = y.emp_no
+join emp_sal as z on z.emp_no = x.emp_no
+where x.dept_no = y.dept_no;
+
+-- -----------------
+SELECT s.emp_no
+FROM salaries s
+JOIN dept_emp d 
+  ON s.emp_no = d.emp_no
+GROUP BY s.emp_no
+HAVING MAX(s.salary) > MIN(s.salary)
+   AND COUNT(DISTINCT d.dept_no) = 1;
 
 -- Find employees whose current department salary rank is lower than their best historical rank.
 
--- 4️⃣ Salary Plateau Detection
-
 -- Find employees whose salary remained the same for 3 or more consecutive records.
+-- date function
 
--- 5️⃣ Incorrect History Records (Data Quality)
+with salary_lag as
+(
+select emp_no, from_date, salary,
+case 
+	when salary = lag(salary) over (partition by emp_no order by from_date) then 1 
+	else 0 
+end as no_change_flag
+from salaries
+),
+group_ AS 
+(
+select emp_no, from_date, salary, no_change_flag,
+        sum(case
+				when no_change_flag = 0 then 1 
+                else 0 
+			end
+           ) over (partition by emp_no order by from_date) as grp
+FROM salary_lag
+)
+SELECT emp_no
+FROM group_
+GROUP BY emp_no, grp
+HAVING COUNT(*) >= 3;
 
 -- Find employees whose salary or department date ranges overlap incorrectly.
 
--- 6️⃣ Top Performer Stability
-
 -- Find employees who were top-paid (rank = 1) in their department for more than 2 consecutive salary records.
-
--- 7️⃣ Cross-Department Salary Jump
 
 -- Find employees whose largest salary increase happened when they changed departments.
 
--- 8️⃣ Department Inflation
-
 -- Find departments where the average current salary increased by more than 30% compared to their historical average.
 
--- 9️⃣ Career Volatility Index (Advanced)
-
 -- For each employee, calculate a volatility score based on:
-
 -- number of department changes
-
 -- number of salary changes
-
 -- total career duration
-
 -- Rank employees by highest volatility.
-
--- 🔟 Salary History Consistency Check (Very Hard)
 
 -- Find employees whose salary history is continuous (no gaps, no overlaps, no decreases).
 
--- --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-select *,
-case
-    when year(hire_date) between max(year(hire_date)) and (max(year(hire_date)) - 2) then 'new'
-    when year(hire_date) between (max(year(hire_date)) - 2) and (max(year(hire_date)) - 7) then 'mid'
-    when year(hire_date) between (max(year(hire_date)) - 7) and min(year(hire_date)) then 'old'
-    end as x
-    from employees
-    group by emp_no;
+select * from salaries;
 
--- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+with salary_lag as
+(
+select emp_no, from_date, salary,
+case 
+	when salary = lag(salary) over (partition by emp_no order by from_date) then 0
+	else 1 
+end as no_change_flag
+from salaries
+),
+group_ AS 
+(
+select emp_no, from_date, salary, no_change_flag,
+        sum(no_change_flag) over (partition by emp_no order by from_date) AS grp
+FROM salary_lag
+)
+SELECT emp_no
+FROM group_
+WHERE no_change_flag = 0
+GROUP BY emp_no, grp
+HAVING COUNT(*) >= 2;
 
 
+
+select * from employees;
+select * from dept_manager;
