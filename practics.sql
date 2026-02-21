@@ -9,7 +9,7 @@ change column `Order id` order_id varchar(20);
 alter table globalsuperstore
 change column `Order date` order_date date;
 
-select `Postal Code` from globalsuperstore; 
+select `Postal Code` from globalsuperstore;
 
 select state, count(distinct(`postal code`))
 from globalsuperstore
@@ -81,7 +81,7 @@ from globalsuperstore;
 
 drop database priyanshu;
 
--- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------
 
 -- **SQL Practics project for learning data cleaning**
 
@@ -262,41 +262,6 @@ case
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- emp who not have manager
-
-with z as
-(
-with current_manager as
-(
--- current manager
-select dm.emp_no, d.dept_name, d.dept_no 
-from dept_manager as dm join departments as d 
-on dm.dept_no = d.dept_no
-where dm.to_date in (select max(to_date)
-				  from salaries)
-),
-current_emp_and_dept as
-(
--- current emp and there dept
-select e.emp_no, d.dept_name, de.dept_no
-from employees as e join dept_emp as de on e.emp_no = de.emp_no
-join departments as d on d.dept_no = de.dept_no
-where de.to_date  in (select max(to_date)
-                       from salaries)
-order by e.emp_no
-)
-select x.emp_no, x.dept_no, y.emp_no as r
-from current_emp_and_dept as x join current_manager as y
-on x.dept_no = y.dept_no
-order by x.emp_no
-)
-select e.emp_no
-from employees as e
-where e.emp_no not in (select z.emp_no from z);
-
-
--- ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
 create table test(
 	s_no int primary key auto_increment,
     full_name varchar(30),
@@ -364,7 +329,7 @@ WHERE s_no NOT IN (
     ) x
 );
 
--- -------------------------------------------------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------
 create table Test_2 (
 	_no varchar(10) primary key,
     full_name varchar(30),
@@ -381,6 +346,38 @@ select * from test;
 drop table test_2;
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- emp who not have manager
+
+with z as
+(
+with current_manager as
+(
+-- current manager
+select dm.emp_no, d.dept_name, d.dept_no 
+from dept_manager as dm join departments as d 
+on dm.dept_no = d.dept_no
+where dm.to_date in (select max(to_date)
+				  from salaries)
+),
+current_emp_and_dept as
+(
+-- current emp and there dept
+select e.emp_no, d.dept_name, de.dept_no
+from employees as e join dept_emp as de on e.emp_no = de.emp_no
+join departments as d on d.dept_no = de.dept_no
+where de.to_date  in (select max(to_date)
+                       from salaries)
+order by e.emp_no
+)
+select x.emp_no, x.dept_no, y.emp_no as r
+from current_emp_and_dept as x join current_manager as y
+on x.dept_no = y.dept_no
+order by x.emp_no
+)
+select e.emp_no
+from employees as e
+where e.emp_no not in (select z.emp_no from z);
 
 -- emp who have more salary then there manager
 
@@ -413,8 +410,6 @@ select a.emp_no, a.salary
 from current_emp_dept_salary as a join current_manager_dept_salary as b
 on a.dept_name = b.dept_name
 where a.salary > b.salary;
-
--- ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- find employee who currently working in more than one departemnt
 
@@ -463,9 +458,7 @@ join departments as d on d.dept_no = de.dept_no
 where de.to_date in (select max(s2.to_date)
 					 from salaries as s2);
 
--- ----------------------------------------------------------------------------------------------------------------------------------------------------
-
--- 1. Find employees whose current salary belongs to a department they are no longer part of.
+--  Find employees whose current salary belongs to a department they are no longer part of.
 
 select s.emp_no
 from salaries as s left join dept_emp as d
@@ -496,7 +489,7 @@ from employees
 where not exists (select * from cur_emp_dept);
 -- --------------------------------------------------------------------
 
--- 2. Find employees whose salary increased, but department never changed throughout their career.
+-- Find employees whose salary increased, but department never changed throughout their career.
 
 select s.emp_no
 from salaries as s join dept_emp as d on s.emp_no = d.emp_no
@@ -592,7 +585,7 @@ HAVING COUNT(*) >= 3;
 
 -- Find employees whose salary history is continuous (no gaps, no overlaps, no decreases).
 
-
+-- -------------------------------------------------------------------------------------------------------------------------------------
 select * from salaries;
 
 with salary_lag as
@@ -615,8 +608,6 @@ FROM group_
 WHERE no_change_flag = 0
 GROUP BY emp_no, grp
 HAVING COUNT(*) >= 2;
-
-
 
 select * from employees;
 select * from dept_manager;
