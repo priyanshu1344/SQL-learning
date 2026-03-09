@@ -8,7 +8,7 @@ USE project_class;
 -- ----------------------------------------------------------------------------------------------------------------------------
 
 -- TABLES
-
+ 
 -- SUPPLIERS
 CREATE TABLE SUPPLIERS (
   SUPPLIER_ID INT PRIMARY KEY AUTO_INCREMENT,
