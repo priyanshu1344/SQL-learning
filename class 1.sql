@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Leacture 1
-
+ 
 -- Data - collection of raw information
 -- database - where we stored the data
 -- relational database - where we stored the data in the form of table
